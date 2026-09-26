@@ -25,11 +25,12 @@ Built on [librespot](https://github.com/librespot-org/librespot) (Rust) with a m
 - **Artist pages** -- browse followed artists, view an artist's popular tracks, and jump straight to the artist from any track
 - **Podcast support** -- browse saved shows, view episode lists, play episodes, dedicated New Episodes screen across all subscribed shows
 - **Background playback** -- foreground service with media notification controls
+- **Offline mode** -- download albums, playlists, Liked Songs, and podcast episodes to listen without a connection; downloaded collections stay in sync as they change, and downloads wait for Wi-Fi unless cellular is allowed in Settings
 - **Hardware volume keys** -- physical button integration
 - **Audio focus** -- pauses for calls, ducks for notifications, resumes automatically
 - **Play history** -- dedicated History view combining local Sidespot listening history with your official Spotify history (note: playback through Sidespot does not appear in your official Spotify history)
 - **E-ink display mode** -- high-contrast monochrome UI optimized for e-ink screens
-- **Settings** -- audio quality (160/320 kbps), volume normalization, gapless playback, autoplay, e-ink mode
+- **Settings** -- audio quality (160/320 kbps), volume normalization, gapless playback, autoplay, downloads over cellular, e-ink mode
 
 ## Sidephone Only Features
 
@@ -184,7 +185,6 @@ keyPassword=your-key-password
 - **No lossless/HiFi** -- max quality is 320 kbps OGG Vorbis. Spotify's lossless tier uses DRM that librespot cannot and will not circumvent
 - **No Spotify Connect** -- the device does not appear as a Spotify Connect target
 - **No crossfade** -- crossfade between tracks is not supported
-- **No offline mode** -- streaming only, no download/cache for offline listening
 - **Account risk** -- Spotify has not sanctioned third-party clients. Use at your own risk
 
 ## Disclaimer

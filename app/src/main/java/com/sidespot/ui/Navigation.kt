@@ -60,10 +60,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.sidespot.MainActivity
 import com.sidespot.auth.AuthManager
+import com.sidespot.offline.DownloadManager
 import com.sidespot.settings.SettingsManager
 import com.sidespot.viewmodel.LibraryViewModel
 import com.sidespot.viewmodel.PlayerViewModel
 import com.sidespot.viewmodel.SearchViewModel
+import kotlinx.coroutines.delay
 import java.net.URLDecoder
 import java.net.URLEncoder
 
@@ -80,6 +82,7 @@ object Routes {
     const val SAVED_SHOWS = "saved_shows"
     const val NEW_EPISODES = "new_episodes"
     const val HISTORY = "history"
+    const val DOWNLOADS = "downloads"
     const val SHOW_DETAIL = "show_detail/{uri}/{name}"
     const val ARTIST = "artist/{uri}"
 
@@ -116,6 +119,9 @@ fun SidespotNavigation(
     val authState by authManager.state.collectAsState()
     val libraryViewModel: LibraryViewModel = viewModel()
     val searchViewModel: SearchViewModel = viewModel()
+    val downloadManager = remember { DownloadManager.get() }
+    val isOffline by downloadManager.isOffline.collectAsState()
+    val networkState by downloadManager.network.state.collectAsState()
 
     // Always use LIBRARY as start destination so the NavController's saved state
     // is consistent across Activity recreation.  Login redirect is handled by the
@@ -233,9 +239,18 @@ fun SidespotNavigation(
             }
             val token = authManager.getValidAccessToken()
             Log.i("SidespotAuth", "auto-connect: token=${if (token != null) "present" else "null"}")
-            if (token != null) {
-                playerViewModel.connect(token) { authManager.getValidAccessToken() }
-            }
+            // Without a token (e.g. it expired and can't be refreshed offline) this
+            // starts in offline mode, so downloads can still be played.
+            playerViewModel.connect(token) { authManager.getValidAccessToken() }
+        }
+    }
+
+    // While in offline mode, try to get back online whenever there is a network,
+    // retrying periodically in case Spotify itself was what couldn't be reached.
+    LaunchedEffect(state.isOffline, networkState.isOnline) {
+        while (state.isOffline && networkState.isOnline) {
+            playerViewModel.goOnline(authManager.getValidAccessToken())
+            delay(30_000)
         }
     }
 
@@ -296,7 +311,7 @@ fun SidespotNavigation(
                         // Mini-player above bottom nav.  Gated on trackUri only (not
                         // trackTitle) so it stays mounted across track changes instead
                         // of an unmount/remount.
-                        if (state.isConnected && state.trackUri.isNotEmpty()) {
+                        if ((state.isConnected || state.isOffline) && state.trackUri.isNotEmpty()) {
                             MiniPlayer(
                                 trackTitle = state.trackTitle,
                                 artistName = state.artistName,
@@ -371,7 +386,23 @@ fun SidespotNavigation(
                             onSettingsClick = {
                                 navController.navigate(Routes.SETTINGS)
                             },
+                            onDownloadsClick = {
+                                navController.navigate(Routes.DOWNLOADS)
+                            },
+                            onDownloadedCollectionClick = { uri ->
+                                navController.navigate(Routes.trackList(uri))
+                            },
+                            isOffline = isOffline,
                             viewModel = libraryViewModel,
+                        )
+                    }
+
+                    composable(Routes.DOWNLOADS) {
+                        DownloadsScreen(
+                            onCollectionClick = { uri ->
+                                navController.navigate(Routes.trackList(uri))
+                            },
+                            onBack = { navController.popBackStack() },
                         )
                     }
 
