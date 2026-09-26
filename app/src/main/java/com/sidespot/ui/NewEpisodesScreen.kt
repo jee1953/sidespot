@@ -83,7 +83,7 @@ fun NewEpisodesScreen(
             .padding(horizontal = 16.dp)
             .focusProperties {
                 enter = {
-                    if (firstEpisodeFocusReady) firstEpisodeFocus
+                    if (firstEpisodeFocusReady && !isRestoringIndicatorFocus) firstEpisodeFocus
                     else FocusRequester.Default
                 }
             }

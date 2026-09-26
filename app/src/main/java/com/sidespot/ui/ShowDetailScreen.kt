@@ -92,7 +92,7 @@ fun ShowDetailScreen(
             .padding(horizontal = 16.dp)
             .focusProperties {
                 enter = {
-                    if (firstContentFocusReady) firstContentFocus
+                    if (firstContentFocusReady && !isRestoringIndicatorFocus) firstContentFocus
                     else FocusRequester.Default
                 }
             }
