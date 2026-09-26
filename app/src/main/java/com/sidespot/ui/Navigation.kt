@@ -125,7 +125,6 @@ fun SidespotNavigation(
     val hideChrome = currentRoute == Routes.LOGIN
 
     val settingsState by settingsManager.state.collectAsState()
-    val albumColors = rememberAlbumColors(state.albumArtUrl)
     // Hide status bar while Now Playing overlay is visible
     val activity = LocalContext.current as? Activity
     DisposableEffect(showNowPlaying) {
@@ -254,7 +253,7 @@ fun SidespotNavigation(
         }
     }
 
-    DynamicSidespotTheme(albumColors = albumColors, einkMode = settingsState.einkMode) {
+    SidespotTheme(einkMode = settingsState.einkMode) {
         Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             containerColor = MaterialTheme.colorScheme.background,
@@ -262,8 +261,8 @@ fun SidespotNavigation(
                 if (!hideChrome) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         // Mini-player above bottom nav.  Gated on trackUri only (not
-                        // trackTitle) so it stays mounted across track changes and the
-                        // theme's colour tween is visible instead of an unmount/remount.
+                        // trackTitle) so it stays mounted across track changes instead
+                        // of an unmount/remount.
                         if (state.isConnected && state.trackUri.isNotEmpty()) {
                             MiniPlayer(
                                 trackTitle = state.trackTitle,

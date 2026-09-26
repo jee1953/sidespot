@@ -25,7 +25,6 @@ Built on [librespot](https://github.com/librespot-org/librespot) (Rust) with a m
 - **Artist pages** -- browse followed artists, view an artist's popular tracks, and jump straight to the artist from any track
 - **Podcast support** -- browse saved shows, view episode lists, play episodes, dedicated New Episodes screen across all subscribed shows
 - **Background playback** -- foreground service with media notification controls
-- **Dynamic theming** -- album art colors tint the entire UI with smooth animated transitions
 - **Hardware volume keys** -- physical button integration
 - **Audio focus** -- pauses for calls, ducks for notifications, resumes automatically
 - **Play history** -- dedicated History view combining local Sidespot listening history with your official Spotify history (note: playback through Sidespot does not appear in your official Spotify history)
